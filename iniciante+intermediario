@@ -1,0 +1,23 @@
+
+---------------------Iniciante + Intermediário------------------
+
+
+---- Rede--------
+
+As Redes do Protocolo Internet são seqüências contínuas de endereços IP's. Todos os endereços dentro da rede tem um número de dígitos dentro dos endereços em comum. A porção dos endereços que são comuns entre todos os endereços de uma rede são chamados de porção da rede. Os dígitos restantes são chamados de porção dos hosts. O número de bits que são compartilhados por todos os endereços dentro da rede são chamados de netmask (máscara da rede) e o papel da netmask é determinar quais endereços pertencem ou não a rede. Por exemplo, considere o seguinte:
+
+-----------------
+Endereço do Host     192.168.110.23
+Máscara da Rede      255.255.255.0
+Porção da Rede       192.168.110.
+Porção do Host                  .23
+-----------------
+Endereço da Rede    192.168.110.0
+Endereço Broadcast  192.168.110.255
+-----------------
+
+Qualquer endereço que é finalizado em zero em sua netmask, revelará o endereço da rede que pertence. O endereço e rede é então sempre o menor endereço numérico dentro da escalas de endereços da rede e sempre possui a porção host dos endereços codificada como zeros.
+
+O endereço de broadcast é um endereço especial que cada computador em uma rede "escuta" em adição a seu próprio endereço. Este é um endereço onde os datagramas enviados são recebidos por todos os computadores da rede. Certos tipos de dados como informações de roteamento e mensagens de alerta são transmitidos para o endereço broadcast, assim todo computador na rede pode recebe-las simultaneamente.
+
+Existe dois padrões normalmente usados para especificar o endereço de broadcast. O mais amplamente aceito é para usar o endereço mais alto da rede como endereço broadcast. No exemplo acima este seria 192.168.110.255. Por algumas razões outros sites tem adotado a convenção de usar o endereço de rede como o endereço broadcast. Na prática não importa muito se usar este endereço, mas você deve ter certeza que todo computador na rede esteja configurado para escutar o mesmo endereço broadcast.
