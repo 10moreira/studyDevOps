@@ -21,3 +21,7 @@ Qualquer endereço que é finalizado em zero em sua netmask, revelará o endere�
 O endereço de broadcast é um endereço especial que cada computador em uma rede "escuta" em adição a seu próprio endereço. Este é um endereço onde os datagramas enviados são recebidos por todos os computadores da rede. Certos tipos de dados como informações de roteamento e mensagens de alerta são transmitidos para o endereço broadcast, assim todo computador na rede pode recebe-las simultaneamente.
 
 Existe dois padrões normalmente usados para especificar o endereço de broadcast. O mais amplamente aceito é para usar o endereço mais alto da rede como endereço broadcast. No exemplo acima este seria 192.168.110.255. Por algumas razões outros sites tem adotado a convenção de usar o endereço de rede como o endereço broadcast. Na prática não importa muito se usar este endereço, mas você deve ter certeza que todo computador na rede esteja configurado para escutar o mesmo endereço broadcast.
+
+
+
+
