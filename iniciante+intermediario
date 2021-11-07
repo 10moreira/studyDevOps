@@ -22,6 +22,153 @@ O endereço de broadcast é um endereço especial que cada computador em uma red
 
 Existe dois padrões normalmente usados para especificar o endereço de broadcast. O mais amplamente aceito é para usar o endereço mais alto da rede como endereço broadcast. No exemplo acima este seria 192.168.110.255. Por algumas razões outros sites tem adotado a convenção de usar o endereço de rede como o endereço broadcast. Na prática não importa muito se usar este endereço, mas você deve ter certeza que todo computador na rede esteja configurado para escutar o mesmo endereço broadcast.
 
+---------------Interfaces de rede-----------------------
+
+As interfaces de rede no GNU/Linux estão localizadas no diretório /dev e a maioria é criada dinamicamente pelos softwares quando são requisitadas. Este é o caso das interfaces ppp e plip que são criadas dinamicamente pelos softwares.
+
+Abaixo a identificação de algumas interfaces de rede no Linux (a ? significa um número que identifica as interfaces seqüencialmente, iniciando em 0):
+
+• eth? //Placa de rede Ethernet e WaveLan.
+• ppp? //Interface de rede PPP (protocolo ponto a ponto).
+• slip? //Interface de rede serial
+• eql  //Balanceador de tráfego para múltiplas linhas
+• plip? //Interface de porta paralela
+• arc?e, arc?s //Interfaces Arcnet
+• sl?, ax? //Interfaces de rede AX25 (respectivamente para kernels 2.0.xx e 2.2.xx.
+• fddi? //Interfaces de rede FDDI.
+• dlci??, sdla? //Interfaces Frame Relay, respectivamente para para dispositivos de encapsulamento DLCI e FRAD.
+• nr? //Interface Net Rom
+• rs? //Interfaces Rose
+• st? //Interfaces Strip (Starmode Radio IP)
+• tr? //Token Ring
+
+
+---------Arquivos de configuração usados na resolução de nomes---------------
+
+/etc/resolv.conf //É o arquivo de configuração principal do código do resolvedor de nomes.
+
+/etc/host.conf //É o local onde é possível configurar alguns ítens que gerenciam o código do resolvedor de nomes.
+
+/etc/hosts //Faz o relacionamento entre um nome de computador e endereço IP local.
+
+/etc/networks //tem uma função similar ao arquivo /etc/hosts. Ele contém um banco de dados simples de nomes de redes contra endereços de redes.
+
+------------Serviços de Rede-----------------
+
+Alguns exemplos de portas padrões usadas em serviços TCP/IP:
+
+• 21 - FTP (transferência de arquivos)
+• 23 - Telnet (terminal virtual remoto)
+• 25 - Smtp (envio de e-mails)
+• 53 - DNS (resolvedor de nomes)
+• 79 - Finger (detalhes sobre usuários do sistema)
+• 80 - http (protocolo www - transferência de páginas Internet)
+• 110 - Pop-3 (recebimento de mensagens)
+• 119 - NNTP (usado por programas de noticias)
+
+------------Camadas de Rede---------------------
+
+Existem dois tipos de padrões TCP: Darpa e OSI. O padrão Darpa é dividido em 4 camadas e ainda é o padrão atualmente utilizado. O padrão OSI é mais recente, dividido em 7 camadas, mas ainda não se tornou um padrão como o Darpa.
+
+Darpa:
+
+• Aplicação - www, ftp, dns, etc. //Fazem interface com as aplicações do sistema.
+• Transporte - Protocolo tcp e udp. //Cuidam da parte de transporte dos dados do sistema.
+• Rede - IP, icmp, igmp, arp. //Cuida de levar o pacote para seu destino (rotas) e condições de transmissão.
+• Interface de Rede - Ethernet, FDDI, Token Ring. //Define qual o método que a mensagem transmitida será encapsulada para envio ao seu destino.
+
+Apesar dos padrões Darpa e OSI, o protocolo TCP/IP é oficialmente independente destas camadas.
+
+----------------------Kernel e Módulos------------------------
+
+O Kernel: 
+
+É a peça central do sistema operacional (o Linux), é ele que controla os dispositivos e demais periféricos do sistema (como memória, placas de som, vídeo, discos rígidos, disquetes, sistemas de arquivos, redes e outros recursos disponíveis). Muitos confundem isto e chamam a distribuição de sistema operacional. Isto é errado!
+
+Existe um documento que contém quais são os periféricos suportados/ não suportados pelo GNU/Linux, ele se chama Hardware-HOWTO.
+
+Módulos:
+
+São partes do kernel que são carregadas somente quando são solicitadas por algum aplicativo ou dispositivo e descarregadas da memória quando não são mais usadas.
+
+Os módulos do kernel estão localizados no diretório /lib/modules/versão_do_kernel/* (onde versão_do_kernel é a versão atual do kernel em seu sistema, caso seja 2.6.23.6 o diretório que contém seus módulos será /lib/modules/2.6.23.6.
+
+
+------------Como adicionar suporte a Hardwares e outros dispositivos no kernel----------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
