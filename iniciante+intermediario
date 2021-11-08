@@ -96,15 +96,50 @@ Os módulos do kernel estão localizados no diretório /lib/modules/versão_do_k
 
 ------------Como adicionar suporte a Hardwares e outros dispositivos no kernel----------------------
 
+kmod //Este é o programa usado para carregar os módulos automaticamente quando são requeridos pelo sistema. Ele é um daemon que funciona constantemente fazendo a monitoração, quando verifica que algum dispositivo ou programa está solicitando o suporte a algum dispositivo, ele carrega o módulo correspondente.
+
+Ele pode ser desativado através da recompilação do kernel, dando um kill no processo ou através do arquivo /etc/modules (veja “/etc/modules”. Caso seja desativado, é preciso carregar manualmente os módulos através do modprobe ou insmod.
+
+lsmod // Lista quais módulos estão carregados atualmente pelo kernel. O nome lsmod é uma contração de ls+módulos - Listar Módulos. A listagem feita pelo lsmod é uma alternativa ao uso do comando cat / proc/modules.
+
+insmod // Carrega um módulo manualmente. Para carregar módulos que dependem de outros módulos para que funcionem, você duas opções: Carregar os módulos manualmente ou usar o modprobe que verifica e carrega as dependências correspondentes.
+
+rmmod // Remove módulos carregados no kernel. Para ver os nomes dos módulos atualmente carregados no kernel digite lsmod e verifique na primeira coluna o nome do módulo. Caso um módulo tenha dependências e você tentar remover suas dependências, uma mensagem de erro será mostrada alertando que o módulo está em uso.
+
+modprobe //Carrega um módulo e suas dependências manualmente. Este comando permite carregar diversos módulos e dependências de uma só vez. O comportamento do modprobe é modificado pelo arquivo /etc/modules.conf.
+
+depmod //Verifica a dependência de módulos. As dependências dos módulos são verificadas pelos scripts em /etc/init.d usando o comando depmod -a e o resultado gravado no arquivo /lib/modules/versao_do_kernel/modules.dep.
+
+modconf //Este programa permite um meio mais fácil de configurar a ativação de módulos e opções através de uma interface através de menus. Selecione a categoria de módulos através das setas acima e abaixo e pressione enter para selecionar os módulos existentes.
 
 
 
+--------------------------Arquivos e daemons de Log--------------------------
+
+A atividade dos programas são registradas em arquivos localizados em /var/log . Estes arquivos de registros são chamados de logs e contém a data, hora e a mensagem emitida pelo programa (violações do sistema, mensagens de erro, alerta e outros eventos) entre outros campos. Enfim, muitos detalhes úteis ao administrador tanto para acompanhar o funcionamento do seu sistema, comportamento dos programas ou
+ajudar na solução e prevenção de problemas.
+Alguns programas como o Apache, exim, ircd e squid criam diversos arquivos de log e por este motivo estes são organizados em sub-diretórios (a mesma técnica é usada nos arquivos de configuração em /etc, conforme a padrão FHS atual).
+
+-------------Formato do arquivo de log------
+
+Um arquivo de log é normalmente composto pelos seguintes campos:
+
+Data|Hora|Máquina|daemon|mensagem
+
+O campo máquina é o nome do computador que registrou a mensagem (a máquina pode atuar como um servidor de logs registrando mensagens de diversos computadores em sua rede). O campo daemon indica qual programa gravou a mensagem.
+
+
+rsyslogd //Este daemon controla o registro de logs do sistema.
+
+Na distribuição Debian, o daemon syslogd é iniciado através do script /etc/init.d/sysklogd.
+
+
+logger //Este comando permite enviar uma mensagem nos log do sistema. A mensagem é enviada aos logs via daemon syslogd ou via soquete do sistema, é possível especificar a prioridade, nível, um nome identificando o processo, etc. Seu uso é muito útil em shell scripts ou em outros eventos do sistema.
+logger [opções] [mensagem]
 
 
 
-
-
-
+-------------------Sistema de gerenciamento de pacotes--------------------
 
 
 
