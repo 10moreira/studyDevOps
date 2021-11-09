@@ -220,39 +220,75 @@ Normalmente as distribuições seguem o padrão FHS, mantendo binários de admin
 
 --------------------Tarefas automáticas de manutenção do sistema-----------------------
 
+Os arquivos responsáveis pela manutenção automática do sistema se encontram em arquivos individuais localizados nos diretórios /etc/cron.daily, /etc/cron.weekly e /etc/cron.montly. A quantidade de arquivos depende da quantidade de pacotes instalado em seu sistema, porque alguns programam tarefas nestes diretórios e não é possível descrever todas, para detalhes sobre o que cada arquivo faz veja o cabeçalho e o código de cada arquivo.
+
+Estes arquivos são executados pelo cron através do arquivo /etc/crontab. Você pode programar quantas tarefas desejar, para detalhes veja “cron” e “at”. Alguns programas mantém arquivos do cron individuais em /var/spool/cron/crontabs que executam comandos periodicamente.
+
+cron //O cron é um daemon que permite o agendamento da execução de um comando/programa para um determinado dia/mês/ano/hora. É muito usado em tarefas de arquivamento de logs, checagem da integridade do sistema e execução de programas/comandos em horários determinados.
+
+As tarefas são definidas no arquivo /etc/crontab e por arquivos individuais de usuários em /var/spool/cron/crontabs/[usuário] (criados através do programa crontab). Adicionalmente a distribuição Debian utiliza os arquivos no diretório /etc/cron.d como uma extensão para o /etc/crontab.
+
+Para agendar uma nova tarefa, basta editar o arquivo /etc/crontab com qualquer editor de texto (como o ae e o vi) e definir o mês/dia/hora que a tarefa será executada. Não é necessário reiniciar o daemon do cron porque ele verifica seus arquivos a cada minuto. Veja a seção “O formato de um arquivo crontab” para entender o formato de arquivo cron usado no agendamento de tarefas.
 
 
+----------------------- Principais arquivos de configuração do diretório /etc---------------------
+
+Diretório /etc/alternatives //Este diretório contém links para diversos aplicativos padrões utilizados pelo sistema. Dentre eles são
+encontrados links para o editor do sistema e o xterm padrão usado pelo sistema.
+
+Por exemplo, se você quiser usar o editor jed ao invés do ae ou vi, remova o link editor com o comando rm editor, localize o arquivo executável do jed com which jed e crie um link para ele ln -s /usr/bin/jed editor. De agora em diante o editor padrão usado pela maioria dos aplicativos será o jed.
+
+Arquivo /etc/default/devpts //Este arquivo contém algumas configurações para os pseudo terminais em /dev/pts.
+
+Arquivo /etc/default/rcS //Contém variáveis padrões que alteram o comportamento de inicialização dos scripts em /etc/rcS.d
+
+Por exemplo, se quiser menos mensagens na inicialização do sistema, ajuste o valor da variável VERBOSE para no.
 
 
+Arquivo /etc/console-tools/config // Este arquivo contém configurações padrões do pacote para as fontes de tela e mapas de teclado usados pelo sistema. A fonte de tela é especificada neste arquivo (as fontes disponíveis no sistema estão localizadas em /usr/share/consolefonts).
+Os arquivos de mapa de teclados estão localizados no diretório /usr/share/keymaps/.
+
+Diretório /etc/menu-methods //Este diretório contém uma lista de arquivos que são executados pelo programa update-menu para criar os menus dos programas.
+
+Arquivo /etc/menu-methods/translate_menus  //Este arquivo permite fazer a tradução de nomes de menus, identificação ou títulos usados no ambiente gráfico.
+
+Diretório /etc/network //Este diretório contém as configurações das interfaces (placas) de rede do sistema e outras opções úteis para a configuração/segurança da rede.
+
+Arquivo /etc/network/interfaces  //Este é o arquivo de configuração usado pelos programas ifup e ifdown, respectivamente para ativar e desativas as interfaces de rede.
+
+O que estes utilitários fazem na realidade é carregar os utilitários ifconfig e route através dos argumentos passados do arquivo /etc/network/interfaces, permitindo que o usuário iniciante configure uma interface de rede com mais facilidade.
+
+As interfaces e roteamentos são configurados na ordem que aparecem neste arquivo. Cada configuração de interface inicia com a palavra chave iface. A próxima palavra é o nome da interface que deseja configurar (da mesma forma que é utilizada pelos comandos ifconfig e route). Você pode também usar IP aliases especificando eth0:0 mas tenha certeza que a interface real (eth0) é inicializada antes.
 
 
+Arquivo /etc/networks/options //Este arquivo contém opções que serão aplicadas as interfaces de rede durante a inicialização do sistema.
+Este arquivo é lido pelo script de inicialização /etc/init.d/network que verifica os valores e aplica as modificações apropriadas no kernel.
+
+Diretório /etc/pam.d //Este diretório possui arquivos de configuração de diversos módulos PAM existentes em seu sistema.
+
+Diretório /etc/ppp //Contém arquivos de configuração usados pelo daemon pppd para fazer uma conexão com uma rede PPP externa, criados manualmente ou através do pppconfig.
+
+Diretório /etc/security //Este diretório contém arquivos para controle de segurança e limites que serão aplicados aos usuários do sistema. O funcionamento de muitos dos arquivos deste diretório depende de modificações nos arquivos em /etc/pam.d para habilitar as funções de controle, acesso e restrições.
 
 
+Arquivo /etc/security/access.conf //É lido no momento do login do usuário e permite definir quem terá acesso ao sistema e de onde tem
+permissão de acessar sua conta. O formato deste arquivo são 3 campos separados por :, cada linha contendo uma regra de acesso.
+
+O primeiro campo deve conter o caracter + ou - para definir se aquela regra permitirá (+) ou bloqueará(-) o acesso do usuário.
+O segundo campo deve conter uma lista de logins, grupos, usuário@computador ou a palavra ALL (confere com tudo) e EXCEPT (excessão).
+O terceiro campo deve conter uma lista de terminais tty (para logins locais), nomes de computadores, nomes de domínios (iniciando com um .), endereço IP de computadores ou endereço IP de redes (finalizando com .). Também pode ser usada a palavra ALL, LOCAL e EXCEPT (atinge somente máquinas locais conhecidas pelo sistema).
 
 
+Arquivo /etc/security/limits.conf //Defini limites de uso dos recursos do sistema para cada usuário ou grupos de usuários. Os recursos são
+descritos em linhas da seguinte forma:
 
+#<dominio> <tipo> <item> <valor>
 
+Arquivo /etc/passwd //É o arquivo mais cobiçado por Hackers porque contém os dados pessoais do usuário como o login, uid, telefone e senha (caso seu sistema esteja usando senhas ocultas, a senha terá um * no lugar e as senhas reais estarão armazenadas no arquivo /etc/shadow).
 
+Arquivo /etc/shadow //Este arquivo armazena as senhas criptografadas caso estiver usando o recurso de senhas ocultas. Este arquivo somente pode ser lido pelo usuário root.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Arquivo /etc/syslog.conf //Contém configurações para definir o que será registrado nos arquivos de log em /var/log do sistema. Veja a página de manual syslog.conf e dos programas klog e syslogd para entender o formato usado neste arquivo.
 
 
 
