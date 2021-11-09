@@ -141,13 +141,84 @@ logger [opções] [mensagem]
 
 -------------------Sistema de gerenciamento de pacotes--------------------
 
+dpkg //O dpkg (Debian Package) é o programa responsável pelo gerenciamento de pacotes em sistemas Debian. Sua operação é feita em modo texto e funciona através de comandos, assim caso deseje uma ferramenta mais amigável para a seleção e instalação de pacotes, prefira o dselect (que é um front-end para o dpkg) ou o apt (veja “apt”).
+
+Intalar pacotes //Use o comando: dpkg -i [] (ou --install) para instalar um pacote em seu sistema. Talvez ele peça que seja instalado algum pacote que depende para seu funcionamento. Para detalhes sobre dependências veja “Dependências”. É preciso especificar o nome completo do pacote (com a versão e revisão).
+
+Listar pacotes existentes no sistema //Use o comando: dpkg -l [pacote] (--list) para isto.
+
+Removendo pacotes do sistema //Use o comando: dpkg -r (--remove) para remover um pacote do sistema completamente.
+
+apt //O apt é sistema de gerenciamento de pacotes de programas que possui resolução automática de dependências entre pacotes, método fácil de instalação de pacotes, facilidade de operação, permite atualizar facilmente sua distribuição, etc. Ele funciona através de linha de comando sendo bastante fácil de usar. Mesmo assim, existem interfaces gráficas para o apt como o synaptic (modo gráfico) e o aptitude (modo
+texto) que permitem poderosas manipulações de pacotes sugeridos, etc.
 
 
 
+--------------------Manutenção do sistema-------------------------------
 
 
+fsck.ext2 //Este utilitário permite verificar erros em sistemas de arquivos EXT2 e EXT3 (Linux Native).
+
+reiserfsck //Verifica um sistema de arquivos reiserfs em sistema de arquivos.
+
+badblocks //Procura blocos defeituosos em um dispositivo. Note que este apenas pesquisa por blocos defeituosos, sem alterar a configuração do disco. Para marcar os blocos defeituosos para não serem mais usados, utilize a opção -l do fsck (veja “fsck.ext2”).
+
+defrag //Permite desfragmentar uma unidade de disco. A fragmentação é o armazenamento de arquivos em áreas não seqüenciais (uma parte é armazenada no começo a outra no final, etc), isto diminui o desempenho da unidade de disco porque a leitura deverá ser interrompida e feita a movimentação da cabeça para outra região do disco onde o arquivo continua, por este motivo discos fragmentados tendem a fazer um grande
+barulho na leitura e o desempenho menor.
+
+------------ Verificando e marcando setores danificados em um HD--------------------
+
+Limpando arquivos de LOGS
+
+Não é recomendável apagar um arquivo de log pois ele pode ser criado com permissões de acesso indevidas (algumas distribuições fazem isso). Você pode usar o comando: echo -n >arquivo ou o seguinte shell script para zerar todos os arquivos de LOG de uma só vez (as linhas iniciante com # são comentários):
+
+#! /bin/sh
+cd /var/log
+for l in `ls -p|grep '/'`; do
+echo -n >$l &>/dev/null
+echo Zerando arquivo $l...
+done
+echo Limpeza dos arquivos de log concluída!
 
 
+Copie o conteúdo acima em um arquivo com a extensão .sh, dê permissão de execução com o chmod e o execute como usuário root. É necessário executar este script para zerar arquivos de log em subdiretórios de /var/log, caso sejam usados em seu sistema.
+Algumas distribuições, como a Debian GNU/Linux, fazem o arquivamento automático de arquivos de LOGs em arquivos .gz através de scripts disparados automaticamente pelo cron. ATENÇÃO:
+LEMBRE-SE QUE O SCRIPT ACIMA APAGARÁ TODOS OS ARQUIVOS DE LOGs DO SEU SISTEMA SEM POSSIBILIDADE DE RECUPERAÇÃO. TENHA ABSOLUTA CERTEZA DO QUE NÃO PRECISARÁ DELES QUANDO EXECUTAR O SCRIPT ACIMA!
+
+----------------Recuperando a senha de root perdida-----------------------------------
+
+Uma situação que você deve ter se deparado (ou algum dia ainda vai se deparar) é precisar alterar a senha de root e não sabe ou não lembra a senha atual. Esta situação também pode ser encontrada quando ocorre uma falha de disco, falha elétrica, reparos em uma máquina que não detém sua manutenção, etc. A melhor notícia é que a alteração da senha de root é possível e não apresenta problema qualquer para o sistema. Existem várias formas para se fazer isto, a forma que descreverei abaixo assume que você tem acesso a um outro dispositivo de partida que não seja o HD do Linux (CD-ROM, disquetes, outro disco rígido, etc). Assim, mesmo que encontre uma senha de BIOS em uma máquina, poderá colocar o disco rígido em outra máquina e executar estes procedimentos.
+
+OBS: Estes procedimentos tens fins didáticos e administrativos, não sendo escritos com a intenção de fornecer mal uso desta técnica. Entender a exposição de riscos também ajuda a desenvolver novas técnicas de defesa para sistemas críticos, e estas são totalmente possíveis e as mais usadas documentadas neste guia.
+
+• Como primeiro passo consiga um CD de partida ou disquete de uma distribuição Linux. Normalmente os mesmos CDs que usou para instalar sua distribuição também são desenvolvidos para permitir a manutenção do sistema, contendo ferramentas diversas e um terminal virtual disponível para trabalhos manuais (tanto de instalação como manutenção).
+
+• Vá até a BIOS da máquina e altere a ordem de inicialização para que seu sistema inicialize a partir do disquete ou CD-ROM (dependendo do método escolhido no passo anterior).
+
+• Inicialize a partir do Disquete/CD-ROM.
+
+• Na maioria dos casos você provavelmente estará utilizando o CD-ROM que usou para instalar sua distribuição. Imediatamente quando o programa de instalação for iniciado, pressione ALT+F2 para alternar para o segundo terminal virtual do sistema. O segundo terminal esta sempre disponível nas distribuições distribuições Debian, Red Hat, Mandriva, Fedora, etc.
+
+• O próximo passo será montar sua partição raíz para ser possível alterar sua senha de root. Para isto, crie um diretório onde a partição será montada (por exemplo, /target) e execute o comando mount:
+mount /dev/hda1 /target (assumindo que /dev/hda1 é a partição que contém seu sistema de arquivos raíz (/).
+
+• Entre no diretório /target (cd /target) e torne-o seu diretório raíz atual com o comando:
+chroot ..
+
+• digite passwd e entre com a nova senha de superusuário.
+
+• saia do chroot digitando exit
+
+• Digite sync para salvar todas as alterações pendentes para o disco e reinicie o sistema (pressionando-se as teclas CTRL+ALT+DEL, init 6, reboot).
+
+• Retire o CD da unidade de discos e altere sua BIOS para dar a partida a partir do disco rígido.
+
+• Teste e verifique se a senha de root foi alterada.
+
+Normalmente as distribuições seguem o padrão FHS, mantendo binários de administração necessários para recuperação do sistema em caso de panes dentro da partição /, se este não for o caso de sua distribuição (hoje em dia é raro), você terá que montar sistemas de arquivos adicionais (como o /usr, /var) ou então o comando passwd não será encontrado ou terá problemas durante sua execução.
+
+
+--------------------Tarefas automáticas de manutenção do sistema-----------------------
 
 
 
