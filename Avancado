@@ -1,0 +1,257 @@
+
+------------------Firewall iptables-----------------------
+
+O Firewall é um programa que como objetivo proteger a máquina contra acessos indesejados, tráfego indesejado, proteger serviços que estejam rodando na máquina e bloquear a passagem de coisas que você não deseja receber (como conexões vindas da Internet para sua segura rede local, evitando acesso aos dados corporativos de uma empresa ou a seus dados pessoais). No kernel do Linux 2.4, foi introduzido o firewall iptables (também chamado de netfilter) que substitui o ipchains dos kernels da série 2.2. Este novo firewall tem como vantagem ser muito estável (assim como o ipchains e ipfwadm), confiável, permitir muita flexibilidade na programação de regras pelo administrador do sistema, mais opções disponíveis ao administrador para controle de tráfego, controle independente do tráfego da rede local/entre redes/interfaces devido a nova organização das etapas de roteamento de pacotes.
+
+O iptables é um firewall em nível de pacotes e funciona baseado no endereço/porta de origem/destino do pacote, prioridade, etc. Ele funciona através da comparação de regras para saber se um pacote tem ou não permissão para passar. Em firewalls mais restritivos, o pacote é bloqueado e registrado para que o administrador do sistema tenha conhecimento sobre o que está acontecendo em seu sistema.
+
+
+Enfim o iptables é um firewall que agradará tanto a pessoas que desejam uma segurança básica em seu sistema, quando administradores de grandes redes que querem ter um controle minucioso sobre o tráfego que passam entre suas interfaces de rede (controlando tudo o que pode passar de uma rede a outra), controlar o uso de tráfego, monitoração, etc.
+
+-----Ficha técnica do pacote: 
+
+• iptables - Sistema de controle principal para protocolos ipv4
+• ip6tables - Sistema de controle principal para protocolos ipv6
+• iptables-save - Salva as regras atuais em um arquivo especificado como argumento. Este utilitário
+pode ser dispensado por um shell script contendo as regras executado na inicialização da máquina.
+• iptables-restore - Restaura regras salvas pelo utilitário iptables-save.
+
+
+---------Tipos de firewalls--------------
+
+
+Existem basicamente dois tipos de firewalls:
+• nível de aplicação - Este tipo de firewall analisam o conteúdo do pacote para tomar suas decisões de filtragem. Firewalls deste tipo são mais intrusivos (pois analisam o conteúdo de tudo que passa por ele) e permitem um controle relacionado com o conteúdo do tráfego. Alguns firewalls em nível de aplicação combinam recursos básicos existentes em firewalls em nível de pacotes combinando as funcionalidade de controle de tráfego/controle de acesso em uma só ferramenta. Servidores proxy, como o squid, são um exemplo deste tipo de firewall.
+
+• nível de pacotes - Este tipo de firewall toma as decisões baseadas nos parâmetros do pacote, como porta/endereço de origem/destino, estado da conexão, e outros parâmetros do pacote. O firewall então pode negar o pacote (DROP) ou deixar o pacote passar (ACCEPT). O iptables é um excelente firewall que se encaixa nesta categoria.
+Firewall em nível de pacotes é o assunto explicado nesta seção do guia mas será apresentada uma explicação breve sobre o funcionamento de análise de strings do iptables.
+
+Os dois tipos de firewalls podem ser usados em conjunto para fornecer uma camada dupla de segurança no acesso as suas máquinas/máquinas clientes.
+
+
+Antes de iniciar a construção do firewall é bom pensar nos seguintes pontos:
+
+• Quais serviços precisa proteger. Serviços que devem ter acesso garantido a usuários externos e quais serão bloqueados a todas/determinadas máquinas. É recomendável bloquear o acesso a todas portas menores que 1024 por executarem serviços que rodam com privilégio de usuário root, e autorizar somente o acesso as portas que realmente deseja (configuração restritiva nesta faixa de portas).
+• Que tipo de conexões eu posso deixar passar e quais bloquear. Serviços com autenticação em texto plano e potencialmente inseguros como rlogin, telnet, ftp, NFS, DNS, LDAP, SMTP RCP, X-Window são serviços que devem ser ter acesso garantido somente para máquinas/redes que você confia. Estes serviços podem não ser só usados para tentativa de acesso ao seu sistema, mas também como forma de atacar outras pessoas aproveitando-se de problemas de configuração. A configuração do firewall ajuda a prevenir isso, mesmo se um serviço estiver mal configurado e
+tentando enviar seus pacotes para fora, será impedido. Da mesma forma se uma máquina Windows de sua rede for infectada por um trojan não haverá pânico: o firewall poderá estar configurado para bloquear qualquer tentativa de conexão vinda da internet (cracker) para as máquinas de sua rede. Para cópia de arquivos via rede insegura (como através da Internet), é recomendado o uso de serviços que utilizam criptografia para login e transferência de arquivos (veja ???) ou a configuração de uma VPN.
+• Que máquinas terão acesso livre e quais serão restritas.
+• Que serviços deverão ter prioridade no processamento.
+• Que máquinas/redes NUNCA deverão ter acesso a certas/todas máquinas.
+• O volume de tráfego que o servidor manipulará. Através disso você pode ter que balancear o tráfego entre outras máquinas, configurar proteções contra DoS, syn flood, etc.
+• O que tem permissão de passar de uma rede para outra (em máquinas que atuam como roteadores/gateways de uma rede interna).
+• Etc.
+
+
+O que são regras?
+
+As regras são como comandos passados ao iptables para que ele realize uma determinada ação (como bloquear ou deixar passar um pacote) de acordo com o endereço/porta de origem/destino, interface de origem/destino, etc. As regras são armazenadas dentro dos chains e processadas na ordem que são inseridas.
+As regras são armazenadas no kernel, o que significa que quando o computador for reiniciado tudo o que fez será perdido. Por este motivo elas deverão ser gravadas em um arquivo para serem carregadas a cada inicialização.
+Um exemplo de regra: iptables -A INPUT -s 123.123.123.1 -j DROP.
+
+O que são chains?
+
+Os Chains são locais onde as regras do firewall definidas pelo usuário são armazenadas para operação do firewall. Existem dois tipos de chains: os embutidos (como os chains INPUT, OUTPUT e FORWARD) e os criados pelo usuário. Os nomes dos chains embutidos devem ser especificados sempre em maiúsculas (note que os nomes dos chains são case-sensitive, ou seja, o chain input é completamente diferente de INPUT).
+
+  O que são tabelas?
+
+Tabelas são os locais usados para armazenar os chains e conjunto de regras com uma determinada característica em comum. As tabelas podem ser referenciadas com a opção -t tabela e existem 3 tabelas disponíveis no iptables:
+
+• filter - Esta é a tabela padrão, contém 3 chains padrões:
+• INPUT - Consultado para dados que chegam a máquina
+• OUTPUT - Consultado para dados que saem da máquina
+• FORWARD - Consultado para dados que são redirecionados para outra interface de rede ou outra máquina.
+
+Os chains INPUT e OUTPUT somente são atravessados por conexões indo/se originando de localhost.
+OBS: Para conexões locais, somente os chains INPUT e OUTPUT são consultados na tabela filter.
+• nat - Usada para dados que gera outra conexão (masquerading, source nat, destination nat, port forwarding, proxy transparente são alguns exemplos). Possui 3 chains padrões:
+• PREROUTING - Consultado quando os pacotes precisam ser modificados logo que chegam. É o chain ideal para realização de DNAT e redirecionamento de portas (“Fazendo DNAT”).
+• OUTPUT - Consultado quando os pacotes gerados localmente precisam ser modificados antes de serem roteados. Este chain somente é consultado para conexões que se originam de IPs de interfaces
+locais.
+• POSTROUTING - Consultado quando os pacotes precisam ser modificados após o tratamento de roteamento. É o chain ideal para realização de SNAT e IP Masquerading (“Fazendo SNAT”).
+• mangle - Utilizada para alterações especiais de pacotes (como modificar o tipo de serviço (TOS) ou outros detalhes que serão explicados no decorrer do capítulo. Possui 2 chains padrões:
+
+• INPUT - Consultado quando os pacotes precisam ser modificados antes de serem enviados para o chain INPUT da tabela filter.
+• FORWARD - Consultado quando os pacotes precisam ser modificados antes de serem enviados para o chain FORWARD da tabela filter.
+• PREROUTING - Consultado quando os pacotes precisam ser modificados antes de ser enviados para o chain PREROUTING da tabela nat.
+• POSTROUTING - Consultado quando os pacotes precisam ser modificados antes de serem enviados para o chain POSTROUTING da tabela nat.
+• OUTPUT - Consultado quando os pacotes precisam ser modificados antes de serem enviados para o chain OUTPUT da tabela nat. 
+
+Veja “A tabela mangle” para mais detalhes sobre a tabela mangle.
+
+
+//Regras:
+
+Adicionando regras - A 
+
+//iptables -t filter -A INPUT -d 127.0.0.1 -j DROP
+
+Listando regras - L
+
+//iptables [-t tabela] -L [chain] [opções]
+
+Apagando uma regra - D
+
+//iptables -t filter -D INPUT 1
+
+Inserindo uma regra - I
+
+//iptables -t filter -I INPUT 1 -s 192.168.1.15 -d 127.0.0.1 -j ACCEPT
+
+Substituindo uma regra - R
+
+//iptables -R INPUT 2 -d 127.0.0.1 -p icmp -j DROP
+
+
+Criando um novo chain - N
+
+//iptables [-t tabela] [-N novochain]
+
+
+Renomeando um chain criado pelo usuário - E
+
+//iptables -t filter -E chain-antigo novo-chain
+
+Limpando as regras de um chain - F
+
+//iptables [-t tabela] [-F chain]
+
+Apagando um chain criado pelo usuário - X
+
+//iptables [-t tabela] [-X chain]
+
+Zerando contador de bytes dos chains - Z
+
+//iptables [-t tabela] [-Z chain] [-L]
+
+Especificando a política padrão de um chain - P
+
+//iptables [-t tabela] [-P chain] [ACCEPT/DROP]
+
+
+Por exemplo para bloquear o acesso do tráfego de qualquer máquina com o endereço 200.123.123.10 vinda da interface ppp0 (uma placa de fax-modem):
+
+//iptables -A INPUT -s 200.123.123.10 -i ppp0 -j DROP
+
+A mesma regra pode ser especificada como
+
+//iptables -A INPUT -s 200.123.123.10 -i ppp+ -j DROP
+
+O sinal de "+" funciona como um coringa, assim a regra terá efeito em qualquer interface de ppp0 a ppp9. As interfaces ativas no momento podem ser listadas com o comando ifconfig, mas é permitido especificar uma regra que faz referência a uma interface que ainda não existe, isto é interessante para conexões intermitentes como o PPP. Para bloquear qualquer tráfego local para a Internet:
+
+//iptables -A OUTPUT -o ppp+ -j DROP
+
+Para bloquear a passagem de tráfego da interface ppp0 para a interface eth1 (de uma de nossas redes internas):
+
+//iptables -A FORWARD -i ppp0 -o eth1 -j DROP
+
+Especificando um protocolo
+
+//iptables -A INPUT -s 200.200.200.200 -p udp -j DROP
+
+------------Salvando e Restaurando regras----------------------
+
+As regras que você está trabalhosamente criando e testando manualmente enquanto manipula o iptables podem ser salvas de 2 formas; uma delas é escrevendo um shell script que tenha todos os comandos, um por linha. Isto é recomendado quando tem um firewall grande e que exige uma boa padronização de regras, bem como sua leitura, comentários. O script shell também permite o uso de funções presente no interpretador de comando, portanto se você é uma pessoa que gosta de interagir com as funções do shell e deixar as coisas mais flexíveis, prefira esta opção.
+
+A outra forma é usando as ferramentas iptables-save e iptables-restore baseada na idéia do ipchains-save e ipchains-restore. O iptables save deve ser usado sempre que modificar regras no firewall iptables da seguinte forma:
+
+//iptables-save >/dir/iptables-regras
+
+Para restaurar as regras salvas, utilize o comando:
+
+//iptables-restore </dir/iptables-regras
+
+
+
+---------------------Especificando múltiplas portas de origem/destino----------------
+
+O módulo multiport permite que seja especificado múltiplas portas para um alvo. Podem ser especificadas até 15 portas em um único parâmetro e basta que uma porta confira para que a regra entre em ação, pois a comparação é feita usando condições "or". O parâmetro multiport deve ser acompanhado de um dos argumentos abaixo:
+• --source-port [porta1, porta2...] - Faz a regra conferir se a porta de origem estiver presente entre as portas especificadas.
+• --destination-port [porta1, porta2...] - Faz a regra conferir se a porta de destino estiver presente entre as portas especificadas.
+• --port [porta1, porta2...] - Faz a regra conferir caso a porta de origem ou destino esteja presente no parâmetro.
+Este módulo pode eliminar muitas regras de firewall que fazem o mesmo tratamento de pacotes para diversas portas diferentes.
+iptables -A INPUT -p tcp -i ppp0 -m multiport --destination-port 21,23,25,80,110,11
+Bloqueia todos os pacotes vindo de ppp0 para as portas 21 (ftp), 23 (telnet), 25 (smtp), 80 (www), 110 (pop3), 113 (ident), 6667 (irc).
+
+
+------------Especificando o endereço MAC da interface----------------
+
+O módulo mac serve para conferir com o endereço Ethernet dos pacotes de origem. Somente faz sentido se usado nos chains de PREROUTING (da tabela nat) ou INPUT (da tabela filter). Aceita como argumento a opção --mac-source endereço. O símbolo "!" pode ser usado para especificar uma exceção.
+
+//iptables -t filter -A INPUT -m mac --mac-source 00:80:AD:B2:60:0B -j DROP
+
+Confere com a máquina com endereço ethernet igual a 00:80:AD:B2:60:0B.
+
+
+-------------------Monitorando tentativa de conexão de trojans em sua máquina-----------------------
+
+As regras abaixo alertam sobre a tentativa de conexão dos trojans "For Win" mais conhecidos. Coloquei isto aqui por curiosidade de algumas pessoas, pois máquinas Linux são imunes a este tipo de coisa:
+
+#!/bin/sh
+TROJAN_PORTS="12345 31336 31337 31338 3024 4092 5714 5742 2583 8787 5556 5557"
+iptables -t filter -N trojans-in
+for PORTA in ${TROJAN_PORTS};do
+iptables -A trojans-in -p tcp --sport=1024: --dport=${PORTA} -j LOG \
+--log-prefix "FIREWALL: Trojan ${PORTA} "
+iptables -A trojans-in -p tcp --sport=1024: --dport=${PORTA} -j DROP done
+iptables -t filter -A INPUT -i ppp0 -j trojans-in
+
+A primeira linha do iptables cria o chain trojans-in dentro da tabela filter que usaremos para armazenar nossas regras de firewall. A segunda (dentro do laço for) faz uma regra de LOG para registrar as tentativas de acesso de trojans em nosso sistema, a terceira rejeita o acesso. A quarta regra do iptables cria de todo o tráfego vindo da interface ppp0 pra o chain trojans-in (queremos que só o tráfego vindo da internet seja analisado pelo chain trojans-in).
+Muitas das portas especificadas na variável TROJAN_PORTS são antigas conhecidas de quem já brincou ou sofreram com o Back Orifice, Win Crack, NetBus (quem nunca passou pela fase de ter uma lista com mais de 100 netmasks e conseguir encontrar centenas de máquinas por dia infectadas pelo BO? :-).
+No código acima a única coisa que precisa fazer para adicionar mais portas é inseri-las na variável TROJAN_PORTS e executar o programa. O laço do for executará as 2 regras para cada porta processada (economizando linhas e linhas de regras, me livrando de uma LER e poupando muitos bytes neste guia ;-).
+Dependendo do número de portas alvo, este código pode ser muito simplificado usando o recurso multiport do iptables (veja “Especificando múltiplas portas de origem/destino” para detalhes).
+
+
+*****-----------Aqui o Guia Foca trás um exemplo de Firewall simples---------------*******
+
+-------------Gerenciamento de contas e cuidados para a proteção de senhas-------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
