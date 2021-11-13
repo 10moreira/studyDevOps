@@ -205,6 +205,74 @@ Dependendo do número de portas alvo, este código pode ser muito simplificado u
 
 -------------Gerenciamento de contas e cuidados para a proteção de senhas-------------------
 
+Para adicionar uma conta de usuário ao sistema é simples, basta um comando adduser [usuário] e alguns poucos segundos para responder as questões do programa. Quando criamos contas para outros usuários temos 2 alternativas: deixarmos a senha em branco ou escolher uma senha que será passada ao usuário para que ele possa fazer a troca mais tarde. A primeira alternativa é muito perigosa, pois uma pessoa com acesso a /etc/passwd poderá facilmente descobrir sua lista de usuários (principalmente em uma grande empresa quando conhecemos as políticas de criação de novas contas). Um funcionário notaria a presença do novato e poderia aproveitar esta oportunidade para tentar incriminar este usando a conta recém criada ou tentar outras coisas para obter benefício próprio através do descuido de outros.
+
+O programa chage e passwd possui recursos que permitem definir limites mínimos e máximo do tempo para troca de senha de acesso, número máximo de dias após expirar o tempo de troca da senha em que a conta será permanentemente desabilitada (até que o administrador a reative) e o período mínimo entre troca de senhas. Alguns exemplos:
+
+passwd -x 10 -w 3 teste
+//A senha do usuário teste expirará após 10 dias (-x 10) e ele será avisado com 3 dias de antecedência (-w 3) para trocar sua senha. Após o período máximo o usuário será obrigado a trocar a senha.
+
+Quando o usuário efetuar o login receberá a seguinte mensagem: Warning: your password will expire in 3 days.
+
+passwd -x 10 -w 3 -i 2 teste
+
+
+A senha do usuário teste expirará após 10 dias (-x 10) e ele será avisado com 3 dias de antecedência (-w 3) para trocar sua senha, após a expiração da senha, o usuário tem 2 dias antes da conta ser desativada (-i 2). Se o período expirar e o usuário tentar um novo login será mostrada a mensagem: Your account has expired: Please contact your system administrator
+
+Para reativar a conta acima, remova totalmente o bloqueio da conta do usuário teste com passwd - x 0 teste, passwd -x 99999 -w 7 -i 0 teste ou especifique um período de dias maior em adição àqueles especificados para que ele possa trocar a senha.
+
+Por exemplo, caso tenha passado 3 dias desde que a conta acima expirou e deseje dar mais 2 dias para o usuário trocar a conta: passwd -x 17 -i 0 teste A conta será reativada por mais 2 dias dando a oportunidade do usuário trocar a senha. Preste atenção neste exemplo para entender bem a situação e prazos.
+
+passwd -x 90 -n 60 -w 15 -i 0 teste
+
+A senha do usuário teste expirará após 90 dias (-x 90), ele será avisado para trocar sua senha com 15 dias antes do prazo final (-w 15) e a conta será imediatamente desativada caso o prazo máximo para troca da senha expire (-i 0). O usuário também não poderá trocar sua senha durante os primeiros 60 dias desde a última troca de senha (-n 60).
+
+Em sistemas onde precisa adicionar restrições a muitos usuários na criação da conta, é recomendável seguir os métodos descritos em “Definindo valores padrões de restrição”.
+
+OBS1: Em sistemas com senhas ocultas ativadas (veja “Shadow Passwords”) as restrições acima serão especificadas no arquivo /etc/shadow, isto garante que só o usuário root tenha acesso aos detalhes fornecidos neste arquivo.
+
+OBS2: A -d do passwd serve para remover a senha do usuário especificado ou seja somente será necessário fornecer o nome de usuário para ter acesso ao sistema.
+
+OBS3: Leve em consideração que o uso do recursos de senhas de grupo é um risco de segurança, pois a mesma senha será compartilhada entre diversas pessoas.
+
+OBS4: O programa useradd combina as funções do adduser e passwd para garantir que a conta seja criada com as restrições apropriadas. O único inconveniente é que o useradd quebra o Debian Policy e precisa de todos todos os parâmetros para a criação correta da conta (como o diretório home, senha criptografada, e UID numérico). Seu uso é indicado em shell scripts que cuidam automaticamente da tarefa de adicionar usuários ao sistema.
+
+
+-------------------------Definindo valores padrões de restrição----------------------
+
+Isto é muito útil quando precisa criar diversos usuários com as mesmas restrições de contas, isto tornará o gerenciamento do sistema muito mais prático (tudo em Unix é feito para ser mais prático, só devemos saber onde mexer). O arquivo /etc/defaults/useradd contém valores padrões que serão usados pelo useradd e adduser para definir valores de restrições de contas. Estes valores são gerados usando a opção -D em combinação com as seguintes opções do useradd:
+
+• -b [home] - Especificar o diretório home de usuário. O padrão é /home.
+• -e [data] - Data padrão de expiração de contas, especificada no formato AnoMesDia. Por exemplo, 20010920.
+• -f [dias] - Número máximo de dias que a conta permanece válida após a data de expiração até ser desativada.
+• -g [gid/grupo] - ID do grupo ou nome do grupo que o usuário pertencerá inicialmente.
+• -s [shell] - Shell do usuário. O padrão é /bin/bash.
+
+OBS: Note que nem todas as opções acima terão efeito com o adduser (principalmente as opções -f, -g e -s que são especificadas no seu arquivo de configuração /etc/adduser.conf).
+
+makepasswd --chars 12 //Pode criar uma senha com caracteres completamente aleatórios.
+
+--------------Atualização de senhas de múltiplas contas---------------
+
+O programa chpasswd é usado para tal operação. Deve ser especificado um arquivo que contém os campos usuário:senha por linha. Caso as senhas estejam encriptadas deverá ser especificada a opção -e ao programa.
+
+chpasswd -e /localadmin/contas/contas.db
+
+O comando acima atualiza a senha de todos os usuários especificados no arquivo contas.db de uma só vez.
+
+
+------------------Apache--------------------------
+
+
+
+
+
+
+
+
+
+
+
 
 
 
