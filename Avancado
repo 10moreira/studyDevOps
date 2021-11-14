@@ -263,20 +263,135 @@ O comando acima atualiza a senha de todos os usuários especificados no arquivo 
 
 ------------------Apache--------------------------
 
+O Apache é um servidor Web extremamente configurável, robusto e de alta performance desenvolvido por uma equipe de voluntários (conhecida como Apache Group) buscando criar um servidor web com muitas características e com código fonte disponível gratuitamente via Internet. Segundo a Netcraft (http://www.netcraft.com/), o Apache é mais usado que todos os outros servidores web do mundo juntos.
+
+Por padrão, os arquivos de configuração do Apache residem no diretório /etc/apache
+
+Arquivos de log criados pelo Apache
+
+O servidor httpd grava seus arquivos de log geralmente em /var/log/apache, não é possível descrever os arquivos de logs usados porque tanto seus nomes como conteúdo podem ser personalizados no arquivo httpd.conf. Mesmo assim, os arquivos de logs encontrados na instalação padrão do Apache são os seguintes:
+
+• access.log - Registra detalhes sobre o acesso as páginas do servidor httpd.
+• error.log - Registra detalhes saber erros de acesso as páginas ou erros internos do servidor.
+• agent.log - Registra o nome do navegador do cliente (campo UserAgent do cabeçalho http).
 
 
+• start - Inicia o Apache
+• stop - Finaliza o Apache
+• restart - Reinicia o Apache, efetuando uma pausa de 5 segundos entre a interrupção do seu funcionamento e reinicio.
+• reload - Recarrega os arquivos de configuração do Apache, as alterações entram em funcionamento imediatamente.
+• reload-modules - Recarrega os módulos. Basicamente é feito um restart no servidor.
+• force-reload - Faz a mesma função que o reload
+Para reiniciar o Apache usando o /etc/init.d/apache, digite:
+./etc/init.d/apache restart ou
+cd /etc/init.d;./apache restart
+Na realidade, o que o /etc/init.d/apache faz é interagir diretamente com o shell script apachectl.
+
+O apachectl recebe os parâmetros enviados pelo usuário e converte para sinais que serão enviados para o binário apache. Da mesma forma ele verifica os códigos de saída do apache e os transforma em mensagens de erro legíveis para o usuário comum. Os seguintes comandos são aceitos pelo apachectl:
+
+• httpd-server/start - Inicia o Apache
+• stop - Finaliza o Apache (enviando um sinal TERM)
+• restart - Reinicia o Apache (enviando um sinal HUP)
+• graceful - Recarrega os arquivos de configuração do Apache (enviando um sinal USR1)
+• fullstatus - Mostra o status completo do servidor Apache (requer o lynx e o módulo mod_status carregado).
+• status - Mostra o status do processo do servidor Apache (requer o lynx e o módulo mod_status carregado).
+• configtest - Verifica se a sintaxe dos arquivos de configuração está OK (executa um apache -t).
+
+Opções de linha de comando:
+
+• -D nome - define um nome que será usado na diretiva <IfDefine nome>.
+• -d diretório - especifica o diretório ServerRoot (substitui o do arquivo de configuração).
+• -f arquivo - especifica um arquivo ServerConfigFile alternativo.
+• -C "diretiva" - processa a diretiva antes de ler os arquivo de configuração.
+• -c "diretiva" - processa a diretiva depois de ler os arquivos de configuração.
+• -v - mostra a versão do programa.
+• -V - mostra opções usadas na compilação do Apache.
+• -h - Mostra o help on-line do programa
+• -l - lista módulos compilados junto com o Apache (embutidos)
+• -L - lista diretivas de configurações disponíveis
+• -S - Mostra configurações de Virtual Hosting
+• -t - executa a checagem de sintaxe nos arquivos de configuração do Apache (incluindo a checagem da diretiva DocRoot).
+• -T - executa a checagem de sintaxe nos arquivos de configuração do Apache (menos da diretiva DocRoot).
 
 
+-----------------Configurando o Apache como servidor proxy--------------------------
+
+O Apache pode ser configurado para funcionar como servidor proxy transparente para sua rede interna, possibilitando inclusive o uso de cache de disco. É possível se fazer conexões HTTP (incluindo SSL) e FTP. Através desta característica também é possível usar uma das características mais interessante desse servidor web: o redirecionamento de conexões para uma determinada URL para uma outra máquina, que pode ser um outro host remoto ou uma máquina da rede interna (não acessível diretamente via Internet).
+
+O primeiro passo é ativar o módulo de proxy no arquivo httpd.conf, basta descomentar a linha.
+
+Note que quando o suporte a proxy não está ativado no Apache, qualquer endereço de URL externa levará a página definida pela diretiva DocumentRoot. Isto deixará de funcionar após configurar o serviço de proxy.
 
 
+------------Encriptando Dados-------------------
+
+gpg -e arquivo.txt
+
+----------Decriptando dados com o GPG-------------
+
+gpg -d arquivo.txt.asc >arquivo.txt
+gpg -d arquivo.txt.gpg >arquivo.txt
 
 
+------------Assinando arquivos---------------
+
+Assinar um arquivo é garantir que você é a pessoa que realmente enviou aquele arquivo. Use a opção -s
+para assinar arquivos usando sua chave privada:
+
+gpg -s arquivo.txt
 
 
+A "FraseSenha" será pedida para assinar os dados usando sua chave privada. Será gerado um arquivo arquivo.txt.gpg (assinado e compactado). Adicionalmente a opção --clearsign poderá ser usada para fazer uma assinatura em um texto plano, este é um recurso muito usado por programas de e-mails com suporte ao gpg:
+
+gpg -s --clearsign arquivo.txt
+
+--------------Checando assinaturas----------------
+
+ gpg --verify arquivo.txt.asc
+ 
+Se a saída for "Assinatura Correta", significa que a origem do arquivo é segura e que ele não foi de qualquer forma modificado.
+
+gpg --verify arquivo.txt.gpg
 
 
+----------Mudando sua FraseSenha-------------
+
+Execute o comando gpg --edit-key usuário, quando o programa entrar em modo de comandos, digite passwd. Será lhe pedida a "Frase Senha" atual e a nova "Frase Senha". Digite "save" para sair e salvar as alterações ou "quit" para sair e abandonar o que foi feito.
+
+O gpg --edit-key permite gerenciar diversos aspectos de suas chaves é interessante explora-lo digitando "?" para exibir todas as opções disponíveis.
 
 
+--------------------Assinando uma chave digital---------------------
+
+A assinatura de chaves é um meio de criar laços de confiança entre usuários PGP. Assinar uma chave de alguém é algo sério, você deve ter noção do que isto significa e das conseqüências que isto pode trazer antes de sair assinando chaves de qualquer um.
+
+O próprio teste para desenvolvedor da distribuição Debian requer como primeiro passo a identificação do candidato, caso sua chave pgp seja assinada por algum desenvolvedor desta distribuição, imediatamente o teste de identificação é completado. A partir disso você deve ter uma noção básica do que isto significa.
+
+Para assinar uma chave siga os seguintes passos:
+1. Importe a chave pública do usuário (veja “Adicionando chaves públicas ao seu chaveiro pessoal”).
+2. Execute o comando gpg --edit-key usuario (onde usuario é o nome do usuário/e-mail/IDchave da chave pública importada).
+3. Digite list, e selecione a chave pública (pub) do usuário com o comando uid [numero_chave].
+
+Para assinar todas as chaves públicas do usuário, não selecione qualquer chave com o comando uid.
+4. Para assinar a chave pública do usuário digite sign, será perguntado se deseja realmente assinar a chave do usuário e então pedida a "FraseSenha" de sua chave privada.
+5. Digite "list", repare que existe um campo chamado trust: n/q no lado direito. O primeiro parâmetro do "trust" indica o valor de confiança do dono e o segundo (após a /) o valor de confiança calculado automaticamente na chave. As seguintes possuem o seguinte significado:
+
+• - - Nenhum dono encontrado/confiança não calculada.
+• e - Chave expirada/falha na checagem de confiança.
+• q - Quando não conhece o usuário.
+• n - Quando não confia no usuário (é o padrão).
+• m - Pouca confiança no usuário.
+• f - Totalmente confiável.
+• u - Indiscutivelmente confiável. Somente usado para especificar a chave pública do próprio usuário.
+O valor de confiança da chave pode ser modificado com o comando trust e selecionando uma das opções de confiança. Os valores de confiança para a chave pública pessoal é -/u (não é necessário calcular a confiança/indiscutivelmente confiável).
+
+-----------------Listando assinaturas digitais---------------
+
+Execute o comando gpg --list-sigs para listas todas as assinaturas existentes no seu chaveiro. Opcionalmente pode ser especificado um parâmetro para fazer referência a assinatura de um usuário:gpg
+
+--list-sigs usuario.
+
+O comando gpg --check-sigs adicionalmente faz a checagem de assinaturas.
 
 
 
