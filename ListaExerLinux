@@ -1,0 +1,33 @@
+-------Linux Self Assessment-----------
+
+-----Qual a sua experiência com o Linux?------------
+
+Comecei a utilizar efetivamente o Linux em 2015 em computadores particulares e logo comecei,
+a utilizar o Linux em máquinas no trabalho tanto como suporte como em servidores.
+
+----Explique o que cada um dos seguintes comandos faz e dê um exemplo de como usá-lo:  
+
+
+    touch //Usado principalmente para criar arquivos vazios, além de alterar o registro de data e hora (timestamp) de arquivos ou pastas.
+    
+    ls//Lista arquivos
+    rm//Remove arquivos
+    cat //Exibir o conteúdo de um ou vários arquivos de texto.
+    cp //Copia arquivos
+    mkdir //Cria diretorios
+    pwd //Exibe o diretorio corrente.
+    cd // Entra em um diretorio ou saír dele.
+
+----O que cada um dos seguintes comandos faz? 
+
+
+    cd /  //mude para o diretório raiz. 
+    cd ~  //mude para o seu diretório home. 
+    cd   //mude para o seu diretório home. 
+    cd .. //Sai do diretorio corrente para o anterior.
+    cd .  //mude para o diretório em que você está atualmente.
+    cd - //mudar para o último caminho visitado.
+
+
+
+
