@@ -28,6 +28,77 @@ a utilizar o Linux em máquinas no trabalho tanto como suporte como em servidore
     cd .  //mude para o diretório em que você está atualmente.
     cd - //mudar para o último caminho visitado.
 
+--Alguns dos comandos da pergunta anterior podem ser executados com o sinalizador -r / -R. O que isso faz? Dê um exemplo de quando você o usaria.
+
+O sinalizador -r (ou -R em alguns comandos) permite que o usuário execute um determinado comando recursivamente. Por exemplo, listar todos os arquivos na seguinte árvore é possível quando feito recursivamente (ls -R):
+
+/ dir1 / dir2 / arquivo1 arquivo2 dir3 / arquivo3
+Para listar todos os arquivos, pode-se executar ls -R / dir1 
+
+----Explique cada campo na saída do comando `ls -l`
+
+Ele mostra uma lista detalhada de arquivos em um formato longo. Da esquerda:
+
+ permissões de arquivo, número de links, nome do proprietário, grupo do proprietário, tamanho do arquivo, data / hora da última modificação e diretório / nome do arquivo.
+ 
+----O que são arquivos / diretórios ocultos? Como listá-los? 
+
+Esses são arquivos não exibidos diretamente após a execução de uma listagem direta ls padrão. Um exemplo desses arquivos são .bashrc, que são usados para executar alguns scripts. Alguns também armazenam configurações sobre serviços em seu host, como .KUBECONFIG. O comando usado para listá-los é, ls -a.
+
+--------O que fazer > e < fazer em termos de entrada e saída de programas? 
+
+Eles recebem a entrada (<) e a saída para um determinado arquivo (>) usando stdin e stdout.
+
+myProgram <input.txt> executionOutput.txt 
+
+
+------Explique o que cada um dos seguintes comandos faz e dê um exemplo de como usá-lo: 
+
+    sed //lê um arquivo e retorna seu texto
+    grep //Ele procura por padrões especificados pelo usuário dentro de arquivos de texto.
+    cut //Conseguimos imprimir na saída padrão uma sessão ou parte de uma string de um arquivo.
+    awk //Verifica cada arquivo de entrada em busca de linhas que correspondam a qualquer conjunto de padrões especificados.
+    
+---------Como renomear o nome de um arquivo ou diretório? 
+Usando o comando mv. 
+
+------- Especifique qual comando você usaria (e como) para cada um dos seguintes cenários
+
+     Remova um diretório com arquivos?
+     Exibir o conteúdo de um arquivo?
+     Fornece acesso ao arquivo / tmp / x para todos?
+     Altere o diretório de trabalho para o diretório inicial do usuário?
+     Substitua todas as ocorrências da palavra "bom" por "ótimo" no arquivo / tmp / y ?
+  
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
