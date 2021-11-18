@@ -65,19 +65,126 @@ Usando o comando mv.
 ------- Especifique qual comando você usaria (e como) para cada um dos seguintes cenários
 
      Remova um diretório com arquivos?
+     	 rm -rf dir //Remove arquivos
      Exibir o conteúdo de um arquivo?
+       cat or less  //lê um arquivo e retorna seu texto
      Fornece acesso ao arquivo / tmp / x para todos?
+      chmod 777 /tmp/x
      Altere o diretório de trabalho para o diretório inicial do usuário?
+       cd ~  //mude para o seu diretório home. 
      Substitua todas as ocorrências da palavra "bom" por "ótimo" no arquivo / tmp / y ?
+  	sed -i s/good/great/g /tmp/y 
+  	
+--------Como você pode verificar qual é o caminho de um determinado comando? 
+
+    whereis
+    which 
   
+--------------Qual é a diferença entre esses dois comandos? Isso resultará na mesma saída? 
+
+echo hello world
+echo "hello world"
+
+
+--------------Explique a piping. Como você executa a piping? 
+
+Usando um pipe no Linux, permite que você envie a saída de um comando para a entrada de outro comando. Por exemplo: cat / etc / services | wc -l 
+
+----------Corrija os seguintes comandos: 
+
+    sed "s/1/2/g' /tmp/myFile
+    find . -iname *.yaml -exec sed -i "s/1/2/g" {} ;
+    
+    Resposta:
+    
+   	sed 's/1/2/g' /tmp/myFile  # sed "s/1/2/g" is also fine
+          find . -iname "*.yaml" -exec sed -i "s/1/2/g" {} \;
+          
+------------Como verificar quais comandos você executou no passado? 
+
+           history command or .bash_history file 
+
+--------Executando o comando df você obtém "command not found". O que pode estar errado? 
+
+Muito provavelmente o $ PATH padrão / gerado foi de alguma forma modificado ou sobrescrito, portanto, não contendo / bin / onde df normalmente iria. Este problema também pode acontecer se o bash_profile ou qualquer arquivo de configuração do seu interpretador for modificado incorretamente, causando comportamentos erráticos. Você resolveria isso corrigindo sua variável $ PATH:
+
+Para consertar existem várias opções:
+
+     Adicionando manualmente o que você precisa ao seu $ PATH PATH = "$ PATH": / user / bin: / .. etc.
+     Você tem suas estranhas variáveis env em backup.
+     Você deve procurar pela variável $ PATH padrão da distro, copiar e colar usando o método # 1
+
+Nota: Existem muitas maneiras de obter erros como este: se bash_profile ou qualquer arquivo de configuração de seu interpretador foi modificado incorretamente; causando comportamentos erráticos, problemas de permissões, software compilado incorreto (se você o compilou por conta própria) ... não há resposta que seja verdadeira 100% das vezes. 
    
 
+-------------------Como você agenda tarefas periodicamente? 
+
+Você pode usar os comandos cron e at. Com o cron, as tarefas são agendadas usando o seguinte formato:
+
+* / 30 * * * * bash myscript.sh Executa o script a cada 30 minutos.
+
+As tarefas são armazenadas em um arquivo cron, você pode escrever nele usando crontab -e
+Alternativamente, se você estiver usando uma distribuição com o systemd, é recomendável usar temporizadores do systemd. 
 
 
+-------------------------No Linux FHS (Filesystem Hierarchy Standard) o que é /? 
+A raiz do sistema de arquivos. O início da árvore. 
 
 
+------------O que é armazenado em cada um dos seguintes caminhos? 
 
 
+    /bin, /sbin, /usr/bin and /usr/sbin    //binários
+    /etc                                  //arquivos de configuração
+    /home				   //diretórios pessoais de diferentes usuários
+    /var                                 //arquivos que tendem a mudar e ser modificados como registros
+    /tmp                                 //arquivos temporários 
+    
+    
+----------------------O que há de especial no diretório / tmp quando comparado a outros diretórios? 
+
+A pasta / tmp é limpa automaticamente, geralmente na reinicialização. 
+
+
+----------Linux - Permissions-------------------
+
+Como alterar as permissões de um arquivo? 
+
+Use o comando chmod
+
+------------O que significam as seguintes permissões? 
+
+777 - Você dá o dono, grupo e outro: Execute (1), Write (2) e Read (4); 4 + 2 + 1 = 7.
+644 - O proprietário leu (4), escreveu (2), 4 + 2 = 6; Grupo e outros leram (4).
+750 - O proprietário tem x + r + w, o grupo tem Ler (4) e Executar (1); 4 + 1 = 5. Outros não têm permissões. 
+
+
+----------O que esse comando faz? chmod + x algum_arquivo ??
+
+//Ele adiciona permissões de execução a todos os conjuntos, ou seja, usuário, grupo e outros.
+
+-----------Explique o que é setgid e setuid 
+
+setuid é uma permissão de arquivo do Linux que permite ao usuário executar um arquivo ou programa com as permissões do proprietário desse arquivo. Isso é possível pela elevação dos privilégios do usuário atual.
+     setgid é um processo que, quando executado, será executado como o grupo que possui o arquivo. 
+     
+------------Qual é o propósito do sticky bit? 
+É um pouco que permite apenas ao proprietário ou ao usuário root deletar ou modificar o arquivo. 
+
+-------------What the following commands do? 
+
+  chmod - altera as permissões de acesso aos objetos do sistema de arquivos
+  chown - altera o proprietário dos arquivos e diretórios do sistema de arquivos
+  chgrp - muda o grupo associado a um objeto do sistema de arquivos 
+
+
+-----------------Você tenta criar um arquivo, mas não consegue. Cite pelo menos três razões diferentes para isso acontecer 
+
+Não há mais espaço em disco
+Chega de inodes
+Nenhuma permissão 
+
+--------------***Linux - Shell Scripting------------
 
 
 
