@@ -184,16 +184,78 @@ Não há mais espaço em disco
 Chega de inodes
 Nenhuma permissão 
 
---------------***Linux - Shell Scripting------------
+--------------Linux - Shell Scripting------------
+
+O que esta linha nos scripts significa ?: #!/bin/bash
+
+/ bin / bash é o shell mais comum usado como shell padrão para login do usuário do sistema Linux. O nome do shell é um acrônimo para Bourne-again shell. O Bash pode executar a grande maioria dos scripts e, portanto, é amplamente usado porque tem mais recursos, é bem desenvolvido e tem uma sintaxe melhor. 
 
 
+----Verdadeiro ou falso ?: quando um determinado comando / linha falha, o script, por padrão, será encerrado e não continuará em execução:
+
+Depende do idioma e das configurações usadas. Quando um script escrito em Bash não consegue executar um determinado comando, ele continuará em execução e executará todos os outros comandos mencionados após o comando que falhou. Na maioria das vezes, gostaríamos realmente que o oposto acontecesse. Para fazer o Bash existir quando um comando específico falhar, use 'set -e' em seu script. 
+
+-------Explique qual seria o resultado de cada comando: 
+
+    echo $0  //echo “O nome do script = ” $0 
+    echo $?  //*? – contém informações sobre o último comando executado.
+    echo $$  //  contém o número do processo em execução.
+    echo $@  // utilizado para exibir uma mensagem na tela
+    echo $#  //  contém o número de argumentos passado para o programa.
+
+------Como você depura scripts de shell? 
+
+A resposta depende do idioma que você está usando para escrever seus scripts. Se Bash for usado, por exemplo:
+
+     Adicionando -x ao script que estou executando no Bash
+     Boa maneira antiga de adicionar declarações de eco
+
+Se for Python, usar pdb é muito útil. 
 
 
+-----Como você obtém informações do usuário em scripts de shell? 
+
+Usando a palavra-chave read so, por exemplo, read x irá esperar pela entrada do usuário e irá armazená-la na variável x. 
+
+----------Explique continue e break. Quando você os usa? 
+
+ break e continue são funções internas do shell que escapam ou avançam dentro de um tempo , por , foreach ou loop até.
+ 
+-----------Executando o seguinte script bash, não obtemos 2 como resultado, por quê? 
+
+x = 2
+echo $x
 
 
+mostra x = 2
+
+-------Como armazenar a saída de um comando em uma variável? 
+
+Colocando o comando entre crase.
+
+Ex:
+
+MINHAVAR=`ls -la`
+
+Ele não guarda o comando dentro da variável, e sim o output deste comando.
+
+----------Gerar número aleatório de 8 dígitos 
+
+shuf -i 9999999-99999999 -n 1 
 
 
+---------------Uma maneira curta de usar if / else. Um exemplo: 
+[[ $a = 1 ]] && b="yes, equal" || b="nope" 
 
+
+----------O que o código a seguir faz e quando você o usaria? 
+
+diff <(ls /tmp) <(ls /var/tmp)
+
+É chamado de 'substituição de processo'. Ele fornece uma maneira de passar a saída de um comando para outro comando ao usar um tubo | não é possível. Ele pode ser usado quando um comando não oferece suporte a STDIN ou você precisa da saída de vários comandos. https://superuser.com/a/1060002/167769 
+
+
+---------------Linux - systemd----------------
 
 
 
